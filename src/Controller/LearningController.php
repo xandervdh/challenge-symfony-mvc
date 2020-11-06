@@ -6,20 +6,19 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class LearningController extends AbstractController
 {
-    private string $name = "unknown";
-    private Session $session;
+    private string $name;
+    private $session;
 
     /**
      * LearningController constructor.
      */
-    public function __construct()
+    public function __construct(SessionInterface $session)
     {
-        $this->session = new Session();
-        //$this->session();
+        $this->session = $session;
     }
 
 
@@ -38,10 +37,10 @@ class LearningController extends AbstractController
      */
     public function aboutMe(): Response
     {
+        $this->name = $this->session->get('name', 'Unknown');
         if ($this->name == 'Unknown'){
             return $this->redirectToRoute('showname');
         }
-        $this->session();
         return $this->render('learning/aboutMe.html.twig', [
             'name' => $this->name,
         ]);
@@ -52,7 +51,7 @@ class LearningController extends AbstractController
      */
     public function showMyName(): response
     {
-        $this->session();
+        $this->name = $this->session->get('name', 'Unknown');
         return $this->render('learning/showName.html.twig', ['name' => $this->name]);
     }
 
@@ -61,18 +60,8 @@ class LearningController extends AbstractController
      */
     public function changeMyName()
     {
-        $_SESSION['name'] = $_POST['name'];
+        $this->session->set('name', $_POST['name']);
         return $this->redirectToRoute('showname');
-    }
-
-    public function session()
-    {
-        $this->session->start();
-        if (isset($_SESSION['name'])) {
-            $this->name = $_SESSION['name'];
-        } else {
-            $this->name = 'Unknown';
-        }
     }
 
 }

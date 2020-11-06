@@ -23,9 +23,7 @@ class LearningController extends AbstractController
      */
     public function aboutMe(): Response
     {
-        return new Response(
-            '<html lang=""><body>Lucky number: 1</body></html>'
-        );
+       return $this->render('learning/aboutMe.html.twig', ['name' => 'BeCode']);
     }
 
     public function showMyName()

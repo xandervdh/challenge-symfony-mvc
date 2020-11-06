@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +19,7 @@ class LearningController extends AbstractController
     public function __construct()
     {
         $this->session = new Session();
+        //$this->session();
     }
 
 
@@ -32,26 +34,25 @@ class LearningController extends AbstractController
     }
 
     /**
-     * @Route("/about-me", name="aboutMe")
+     * @Route("/about-Becode", name="aboutMe")
      */
     public function aboutMe(): Response
     {
-       return $this->render('learning/aboutMe.html.twig', [
-           'name' => $this->name,
-       ]);
+        if ($this->name == 'Unknown'){
+            return $this->redirectToRoute('showname');
+        }
+        $this->session();
+        return $this->render('learning/aboutMe.html.twig', [
+            'name' => $this->name,
+        ]);
     }
 
     /**
      * @Route("/", name="showname")
      */
-    public function showMyName() :response
+    public function showMyName(): response
     {
-        $this->session->start();
-        if (isset($_SESSION['name'])){
-            $this->name = $_SESSION['name'];
-        } else {
-            $this->name = 'Unknown';
-        }
+        $this->session();
         return $this->render('learning/showName.html.twig', ['name' => $this->name]);
     }
 
@@ -62,6 +63,16 @@ class LearningController extends AbstractController
     {
         $_SESSION['name'] = $_POST['name'];
         return $this->redirectToRoute('showname');
+    }
+
+    public function session()
+    {
+        $this->session->start();
+        if (isset($_SESSION['name'])) {
+            $this->name = $_SESSION['name'];
+        } else {
+            $this->name = 'Unknown';
+        }
     }
 
 }

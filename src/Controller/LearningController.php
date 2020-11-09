@@ -74,7 +74,7 @@ class LearningController extends AbstractController
     public function changeMyName()
     {
         $this->session->set('name', $_POST['form']['name']);
-        return $this->redirectToRoute('showname');
+        return $this->forward(LearningController::class . '::showMyName');
     }
 
 }
